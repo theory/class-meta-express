@@ -1,6 +1,6 @@
 package Class::Meta::Express;
 
-# $Id: HTML.pm 1932 2005-08-08 17:17:03Z theory $
+# $Id$
 
 use strict;
 use vars qw($VERSION);
