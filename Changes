@@ -1,6 +1,12 @@
 Revision history for Perl extension Class::Met::Express.
 
 0.02
+      - Documented that the 'reexport' parameter to meta() can take a code
+        reference argument.
+      - Fixed the 'reexport' parameter so that when it is a coderef it
+        actually works.
+      - Added POD coverage test.
+      - Added README to MANIFEST (and therefore to distribution)
 
 0.01  2006-05-30T00:56:44
       - Initial public release.

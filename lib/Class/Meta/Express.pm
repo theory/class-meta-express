@@ -109,7 +109,8 @@ sub _export {
             *{"$caller\::$_"} = \&{__PACKAGE__ . "::$_"}
                 for qw(ctor has method build);
         }
-        return $export ? $export->(@_) : shift;
+        goto $export if $export;
+        return shift;
     };
 }
 
@@ -349,6 +350,18 @@ use its defaults. Just do this:
   has  'name'          # Will be a string.
   build;
 
+If you need your own C<import()> method to export stuff, just pass it to the
+reexport parameter:
+
+  meta base => (
+       meta_class   => 'My::Meta',
+       default_type => 'string',
+       reexport     => sub { ... },
+  );
+
+Class::Meta::Express will do the right thing by shifting execution to your
+import method after it finishes its dirty work.
+
 =back
 
 The parameters may be passed as either a list, as above, or as a hash
@@ -463,6 +476,15 @@ Class::Meta.
 =item L<Class::Meta::Declare|Class::Meta::Declare>
 
 Curtis Poe's declarative inteface to Class::Meta.
+
+=back
+
+=head1 To Do
+
+=over
+
+=item * Make it so that the C<reexport> parameter can work with an C<import>
+method that's already installed in a module.
 
 =back
 

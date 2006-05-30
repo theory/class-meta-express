@@ -3,7 +3,7 @@
 # $Id$
 
 use strict;
-use Test::More tests => 63;
+use Test::More tests => 64;
 use Carp;
 BEGIN { $SIG{__DIE__} = \&confess };
 
@@ -26,11 +26,11 @@ TESTPKG: {
         };
         build;
 
-        ok !defined(&meta),   'meta should no longer be defined';
-        ok !defined(&ctor),   'ctor should no longer be defined';
-        ok !defined(&has),    'has should no longer be defined';
-        ok !defined(&method), 'method should no longer be defined';
-        ok !defined(&build),  'build should no longer be defined';
+        ok !defined &meta,   'meta should no longer be defined';
+        ok !defined &ctor,   'ctor should no longer be defined';
+        ok !defined &has,    'has should no longer be defined';
+        ok !defined &method, 'method should no longer be defined';
+        ok !defined &build,  'build should no longer be defined';
     }
 }
 
@@ -244,7 +244,11 @@ TESTEXPORTER2: {
 
     BEGIN {
         meta exporter2 => (
-             reexport => sub { pass 'another import should be called' },
+             reexport => sub {
+                 my $caller = caller;
+                 no strict 'refs';
+                 *{"$caller\::somat"} = \'foo';
+             },
          );
 
         build;
@@ -258,9 +262,11 @@ TESTIMPORTER2: {
     BEGIN {
         My::TestExporter2->import;
     }
+    is $somat, 'foo', '$somat should be set to "foo"';
     meta 'importer2';
     has  foo => ( type => 'scalar' );
     ok build, 'Build My::TestImporter2';
+    is $somat, 'foo', '$somat should still be set to "foo"';
 }
 
 ok $meta = +My::TestImportDef->my_class, 'Get the TestImportDef meta object';

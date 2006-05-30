@@ -3,6 +3,8 @@ Changes
 lib/Class/Meta/Express.pm
 Makefile.PL
 MANIFEST			This list of files
+META.yml
+README
 t/base.t
 t/pod.t
-META.yml
+t/pod_coverage.t
