@@ -1,0 +1,21 @@
+---
+name: Class-Meta-Express
+version: 0.01
+author:
+  - 'David Wheeler <david@kineticode.com>'
+abstract: 'Concise, expressive creation of Class::Meta classes'
+license: perl
+resources:
+  license: http://dev.perl.org/licenses/
+requires:
+  Class::Meta: 0
+build_requires:
+  Test::Simple: 0.17
+provides:
+  Class::Meta::Express:
+    file: lib/Class/Meta/Express.pm
+    version: 0.01
+generated_by: Module::Build version 0.2801
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.2.html
+  version: 1.2
