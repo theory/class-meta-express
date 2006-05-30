@@ -1,6 +1,6 @@
 Revision history for Perl extension Class::Met::Express.
 
-0.02
+0.02  2006-05-30T03:22:10
       - Documented that the 'reexport' parameter to meta() can take a code
         reference argument.
       - Fixed the 'reexport' parameter so that when it is a coderef it
