@@ -3,7 +3,7 @@
 # $Id$
 
 use strict;
-use Test::More tests => 64;
+use Test::More tests => 67;
 use Carp;
 BEGIN { $SIG{__DIE__} = \&confess };
 
@@ -270,3 +270,32 @@ TESTIMPORTER2: {
 }
 
 ok $meta = +My::TestImportDef->my_class, 'Get the TestImportDef meta object';
+
+##############################################################################
+# Test subclassing.
+SUBEXPRESS: {
+    package My::SubExpress;
+
+    use base 'Class::Meta::Express';
+
+    sub meta {
+        splice @_, 1, 2, default_type => 'string';
+        goto &Class::Meta::Express::meta;
+    }
+}
+
+USESUBEXPRESS: {
+    package My::TestSubExpress;
+    use Test::More;
+    BEGIN {
+        My::SubExpress->import;
+    }
+    meta subex => ();
+    has  foo => ();
+    build;
+}
+
+ok $meta = +My::TestSubExpress->my_class, 'Get the SubExpress meta object';
+ok my $attr = $meta->attributes('foo'), 'Get the "foo" attribute';
+is $attr->type, 'string', 'Its type should be "string"';
+

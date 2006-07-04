@@ -11,10 +11,11 @@ $VERSION = '0.03';
 my %meta_for;
 
 sub import {
+    my $pkg = shift;
     my $caller = caller;
     no strict 'refs';
     return shift if defined &{"$caller\::meta"};
-    *{"$caller\::$_"} = \&{$_} for qw(meta ctor has method build);
+    *{"$caller\::$_"} = $pkg->can($_) for qw(meta ctor has method build);
     return shift;
 }
 
@@ -462,6 +463,38 @@ reference:
 Removes the C<meta>, C<ctor>, C<has>, C<method>, and C<build> functions from
 the calling name space, and then calls C<build()> on the Class::Meta object
 created by C<meta>.
+
+=head1 Overriding Functions
+
+It is possible to override the functions exported by this module by
+subclassing it (after a fashion). Say that you wanted to change the C<meta()>
+function so that it forces all attributes to default to a the type "string".
+Just override the function like so:
+
+  package My::Express;
+  use base 'Class::Meta::Express';
+
+  sub meta {
+      splice @_, 1, 2, default_type => 'string';
+      goto &Class::Meta::Express::meta;
+  }
+
+The trick here is to set C<@_> and then C<goto &Class::Meta::Express::meta>.
+This is so that the package that calls this function is seen as the caller in
+C<Class:Meta::Express::meta()> and the Class::Meta object properlly created
+for that package.
+
+Why would you want to do all this? Well, perhaps you're building a I<lot> of
+classes and don't want to have to repeat yourself so much. So now all you have
+to do is use your My::Express module instead of Class::Meta::Express:
+
+    package My::Person;
+    use My::Express;
+    meta person => ();
+    has  name   => ();
+    build;
+
+And now you've created a new class with the string type attribute "name".
 
 =head1 See Also
 
