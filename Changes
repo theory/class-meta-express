@@ -1,5 +1,7 @@
 Revision history for Perl extension Class::Met::Express.
 
+0.04
+
 0.03  2006-07-04T22:35:42
       - Added ability to override the exported functions by subclassing
         Class::Meta::Express. See the new "Overriding Functions" section of
