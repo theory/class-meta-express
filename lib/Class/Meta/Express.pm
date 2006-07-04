@@ -326,7 +326,7 @@ created with C<has> that don't specify their own data types.
 Installs an C<import()> method into the calling name space that exports the
 express functions. The trick is that, if you've specified values for the
 C<meta_class> and/or C<default_type> parameters, they will be used in the
-C<meta> function exported by your class! Foe example:
+C<meta> function exported by your class! For example:
 
   package My::Base;
   use Class::Meta::Express;
