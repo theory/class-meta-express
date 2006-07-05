@@ -475,7 +475,7 @@ Just override the function like so:
   use base 'Class::Meta::Express';
 
   sub meta {
-      splice @_, 1, 2, default_type => 'string';
+      splice @_, 1, 0, default_type => 'string';
       goto &Class::Meta::Express::meta;
   }
 
