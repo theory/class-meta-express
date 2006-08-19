@@ -464,7 +464,7 @@ reference:
 =head3 class
 
   class {
-      # Declare function.
+      # Declare class.
   }
 
 Yes, the C<class> keyword is secretly a function. It takes a single argument,
