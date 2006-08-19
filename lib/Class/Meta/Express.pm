@@ -6,7 +6,7 @@ use strict;
 use vars qw($VERSION);
 use Class::Meta;
 
-$VERSION = '0.04';
+$VERSION = '0.05';
 
 my %meta_for;
 
@@ -478,7 +478,7 @@ C<meta>.
 
   build;
 
-This function is a deprecated holdover from before version 0.04. It used to be
+This function is a deprecated holdover from before version 0.05. It used to be
 that there was no C<class> keyword and you had to just call the rest of the
 above functions and then call C<build> when you're done. But who liked
 I<that>? It was actually a bitter pill among all this sweet, sweet sugar. But

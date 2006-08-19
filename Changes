@@ -1,5 +1,7 @@
 Revision history for Perl extension Class::Meta::Express.
 
+0.05
+
 0.04  2006-08-19T02:31:49
       - Fixed bad example of splicing @_ in the "Overriding Functions"
         documentation.
