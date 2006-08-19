@@ -3,6 +3,10 @@ Revision history for Perl extension Class::Meta::Express.
 0.04
       - Fixed bad example of splicing @_ in the "Overriding Functions"
         documentation.
+      - Added the 'class' keyword to make class declarations more natural--
+        that is, without needing to call the 'build' function.
+      - Deprecated the 'build' function. It will be removed in a future
+        release.
 
 0.03  2006-07-04T22:35:42
       - Added ability to override the exported functions by subclassing

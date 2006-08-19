@@ -15,8 +15,17 @@ sub import {
     my $caller = caller;
     no strict 'refs';
     return shift if defined &{"$caller\::meta"};
-    *{"$caller\::$_"} = $pkg->can($_) for qw(meta ctor has method build);
+    *{"$caller\::$_"} = $pkg->can($_)
+        for qw(class meta ctor has method build);
     return shift;
+}
+
+sub class (&) {
+    my $code = shift;
+    goto sub {
+        $code->();
+        goto &build;
+    };
 }
 
 sub meta {
@@ -76,7 +85,7 @@ sub _meth {
 
 sub _unimport {
     my $caller = shift;
-    for my $fn (qw(meta ctor has method build)) {
+    for my $fn (qw(class meta ctor has method build)) {
         no strict 'refs';
         my $name = "$caller\::$fn";
         # Copy the current glob contents, excluding CODE.
@@ -108,7 +117,7 @@ sub _export {
         unless (defined &{"$caller\::meta"}) {
             *{"$caller\::meta"} = $meta;
             *{"$caller\::$_"} = \&{__PACKAGE__ . "::$_"}
-                for qw(ctor has method build);
+                for qw(class ctor has method build);
         }
         goto $export if $export;
         return shift;
@@ -140,12 +149,11 @@ Class::Meta::Express - Concise, expressive creation of Class::Meta classes
   package My::Contact;
   use Class::Meta::Express;
 
-  meta contact => ( default_type => 'string' );
-
-  has 'name';
-  has contact => ( required => 1 );
-
-  build;
+  class {
+      meta contact => ( default_type => 'string' );
+      has 'name';
+      has contact => ( required => 1 );
+  }
 
 =head1 Description
 
@@ -154,10 +162,10 @@ with L<Class::Meta|Class::Meta>. Although I am of course fond of
 L<Class::Meta|Class::Meta>, I've never been overly thrilled with its interface
 for creating classes:
 
-  use Class::Meta;
+ package My::Thingy;
+ use Class::Meta;
 
   BEGIN {
-
       # Create a Class::Meta object for this class.
       my $cm = Class::Meta->new( key => 'thingy' );
 
@@ -197,6 +205,7 @@ wasn't alone in wanting a more declarative interface; Curtis Poe, with my
 blessing, created L<Class::Meta::Declare|Class::Meta::Declare>, which would
 use this syntax to create the same class:
 
+ package My::Thingy;
  use Class::Meta::Declare ':all';
 
  Class::Meta::Declare->new(
@@ -239,12 +248,12 @@ What I wanted was an interface with the visual distinctiveness of the original
 Class::Meta syntax but with the declarative approach and intelligent defaults
 of Class::Meta::Declare, while adding B<expressiveness> to the mix. The
 solution I've come up with is the use of temporary functions imported into a
-class only until the C<build()> function is called:
+class only until the end of the class declaration:
 
+  package My::Thingy;
   use Class::Meta::Express;
 
-  BEGIN {
-
+  class {
       # Create a Class::Meta object for this class.
       meta 'thingy';
 
@@ -258,17 +267,15 @@ class only until the C<build()> function is called:
 
      # Add a custom method.
       method chk_pass => sub { return 'code' };
-
-      build;
   }
 
 That's much better, isn't it? In fact, we can simplify it even more by setting
 a default data type and eliminating the empty lists:
 
+  package My::Thingy;
   use Class::Meta::Express;
 
-  BEGIN {
-
+  class {
       # Create a Class::Meta object for this class.
       meta thingy => ( default_type => 'integer' );
 
@@ -280,10 +287,8 @@ a default data type and eliminating the empty lists:
       has name => ( is => 'string', required => 1 );
       has 'age';
 
-     # Add a custom method.
+      # Add a custom method.
       method chk_pass => sub { return 'code' };
-
-      build;
   }
 
 Not bad, eh? I have to be honest: I borrowed the syntax from L<Moose|Moose>.
@@ -292,10 +297,10 @@ Thanks for the idea, Stevan!
 =head1 Interface
 
 Class::Meta::Express exports the following functions into any package that
-C<use>s it. But beware! The functions are temporary! Once you call C<build>,
-the functions are all removed from the calling package, thereby avoiding name
-space pollution I<and> allowing you to create your own functions or methods,
-if you like after C<build>ing the class.
+C<use>s it. But beware! The functions are temporary! Once the class is
+declared, the functions are all removed from the calling package, thereby
+avoiding name space pollution I<and> allowing you to create your own functions
+or methods with the same names, if you like, after declaring the class.
 
 =head2 Functions
 
@@ -456,13 +461,28 @@ reference:
       code => sub { shift; print @_, $/; },
   };
 
+=head3 class
+
+  class {
+      # Declare function.
+  }
+
+Yes, the C<class> keyword is secretly a function. It takes a single argument,
+a code reference, for which may omit the C<sub> keyword. Cute, eh?. It simply
+executes the code refernce passed as its sole argument, removes the C<class>,
+C<meta>, C<ctor>, C<has>, C<method>, and C<build> functions from the calling
+name space, and then calls C<build()> on the Class::Meta object created by
+C<meta>.
+
 =head3 build
 
   build;
 
-Removes the C<meta>, C<ctor>, C<has>, C<method>, and C<build> functions from
-the calling name space, and then calls C<build()> on the Class::Meta object
-created by C<meta>.
+This function is a deprecated holdover from before version 0.04. It used to be
+that there was no C<class> keyword and you had to just call the rest of the
+above functions and then call C<build> when you're done. But who liked
+I<that>? It was actually a bitter pill among all this sweet, sweet sugar. But
+no more; C<build> will likely be removed in a future version.
 
 =head1 Overriding Functions
 
@@ -480,19 +500,20 @@ Just override the function like so:
   }
 
 The trick here is to set C<@_> and then C<goto &Class::Meta::Express::meta>.
-This is so that the package that calls this function is seen as the caller in
-C<Class:Meta::Express::meta()> and the Class::Meta object properlly created
-for that package.
+This is so that the package that calls this function will be seen as the
+caller and therefore the Class::Meta object will be properly created for that
+package.
 
 Why would you want to do all this? Well, perhaps you're building a I<lot> of
 classes and don't want to have to repeat yourself so much. So now all you have
 to do is use your My::Express module instead of Class::Meta::Express:
 
-    package My::Person;
-    use My::Express;
-    meta person => ();
-    has  name   => ();
-    build;
+  package My::Person;
+  use My::Express;
+  class {
+      meta person => ();
+      has  name   => ();
+  }
 
 And now you've created a new class with the string type attribute "name".
 
@@ -503,12 +524,14 @@ And now you've created a new class with the string type attribute "name".
 =item L<Class::Meta|Class::Meta>
 
 This is the module that's actually doing all the work. Class::Meta::Express
-just offers an alternative interface for creating new classes with
-Class::Meta.
+just offers a sweeter interface for creating new classes with Class::Meta.
+You'll still want to know all about Class::Meta's introspection capabilities,
+type constraints, and more. Check it out!
 
 =item L<Class::Meta::Declare|Class::Meta::Declare>
 
-Curtis Poe's declarative inteface to Class::Meta.
+Curtis Poe's declarative inteface to Class::Meta. Deprecated in favor of this
+module.
 
 =back
 

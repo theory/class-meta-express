@@ -1,9 +1,9 @@
 #!/usr/bin/perl -w
 
-# $Id$
+# $Id: base.t 2979 2006-07-05 03:34:04Z theory $
 
 use strict;
-use Test::More tests => 68;
+use Test::More tests => 67;
 use Carp;
 BEGIN { $SIG{__DIE__} = \&confess };
 
@@ -17,21 +17,21 @@ TESTPKG: {
         use_ok 'Class::Meta::Types::Perl';
     }
 
-    class {
+    BEGIN {
         meta   test => ();
         ctor   new  => ();
         has    foo  => ( type => 'scalar' );
         method meth => sub {
             pass 'Method called';
         };
-    };
+        build;
 
-    ok !defined &meta,   'meta should no longer be defined';
-    ok !defined &ctor,   'ctor should no longer be defined';
-    ok !defined &has,    'has should no longer be defined';
-    ok !defined &method, 'method should no longer be defined';
-    ok !defined &build,  'build should no longer be defined';
-    ok !defined &class,  'class should no longer be defined';
+        ok !defined &meta,   'meta should no longer be defined';
+        ok !defined &ctor,   'ctor should no longer be defined';
+        ok !defined &has,    'has should no longer be defined';
+        ok !defined &method, 'method should no longer be defined';
+        ok !defined &build,  'build should no longer be defined';
+    }
 }
 
 ok my $meta = +My::Test->my_class, 'Get the Test meta object';
@@ -57,12 +57,11 @@ TESTHASH: {
         use_ok 'Class::Meta::Types::String';
     }
 
-    class {
-        meta   hash => { trust => 'My::Test' };
-        ctor   new =>  { label => 'Label' };
-        has    foo =>  { type  => 'string' };
-        method meth => { code => sub { pass 'Method called' } };
-    }
+    meta   hash => { trust => 'My::Test' };
+    ctor   new =>  { label => 'Label' };
+    has    foo =>  { type  => 'string' };
+    method meth => { code => sub { pass 'Method called' } };
+    build;
 }
 
 ok $meta = +My::TestHash->my_class, 'Get the TestHash meta object';
@@ -103,15 +102,14 @@ TESTDEFAULT: {
         use_ok 'Class::Meta::Types::String';
     }
 
-    class {
-        meta default => (
-            default_type => 'string',
-            meta_class   => 'My::MetaClass'
-        );
+    meta default => (
+         default_type => 'string',
+         meta_class   => 'My::MetaClass'
+    );
 
-        ctor new => sub { bless { sub => 'yes' }, shift };
-        has  'foo';
-    }
+    ctor new => sub { bless { sub => 'yes' }, shift };
+    has  'foo';
+    build;
 }
 
 ok my $def = My::TestDefault->new, 'Construct TestDefault object';
@@ -136,9 +134,8 @@ TESTEXPORT: {
     }
 
     BEGIN {
-        class {
-            meta export => ( reexport => 1 );
-        }
+        meta export => ( reexport => 1 );
+        build;
     }
 }
 
@@ -149,11 +146,9 @@ TESTIMPORT: {
     BEGIN {
         My::TestExport->import;
     }
-
-    ok class {
-        meta 'import';
-        has  foo => ( type => 'scalar');
-    }, 'Build My::TestImport';
+    meta 'import';
+    has  foo => ( type => 'scalar');
+    ok build, 'Build My::TestImport';
 }
 
 ok $meta = +My::TestImport->my_class, 'Get the TestImportDef meta object';
@@ -172,13 +167,13 @@ TESTEXPORTDEF: {
     }
 
     BEGIN {
-        class {
-            meta exportdef => (
-                default_type => 'string',
-                meta_class   => 'My::MetaClass',
-                reexport     => 1
-            );
-        }
+        meta exportdef => (
+             default_type => 'string',
+             meta_class   => 'My::MetaClass',
+             reexport     => 1
+        );
+
+        build;
     }
 }
 
@@ -189,11 +184,9 @@ TESTIMPORTDEF: {
     BEGIN {
         My::TestExportDef->import;
     }
-
-    ok class {
-        meta 'importdef';
-        has  foo => ();
-    }, 'Build My::TestImportDef';
+    meta 'importdef';
+    has  foo => ();
+    ok build, 'Build My::TestImportDef';
 }
 
 ok $meta = +My::TestImportDef->my_class, 'Get the TestImportDef meta object';
@@ -212,13 +205,13 @@ TESTEXPORTER: {
     }
 
     BEGIN {
-        class {
-            meta exporter => (
-                default_type => 'string',
-                meta_class   => 'My::MetaClass',
-                reexport     => sub { pass 'importer should be called' },
-            );
-        }
+        meta exporter => (
+             default_type => 'string',
+             meta_class   => 'My::MetaClass',
+             reexport     => sub { pass 'importer should be called' },
+        );
+
+        build;
     }
 }
 
@@ -229,11 +222,9 @@ TESTIMPORTER: {
     BEGIN {
         My::TestExporter->import;
     }
-
-    ok class {
-        meta 'importer';
-        has  foo => ();
-        }, 'Build My::TestImporter';
+    meta 'importer';
+    has  foo => ();
+    ok build, 'Build My::TestImporter';
 }
 
 ok $meta = +My::TestImportDef->my_class, 'Get the TestImportDef meta object';
@@ -252,15 +243,15 @@ TESTEXPORTER2: {
     }
 
     BEGIN {
-        class {
-            meta exporter2 => (
-                reexport => sub {
-                    my $caller = caller;
-                    no strict 'refs';
-                    *{"$caller\::somat"} = \'foo';
-                },
-            );
-        }
+        meta exporter2 => (
+             reexport => sub {
+                 my $caller = caller;
+                 no strict 'refs';
+                 *{"$caller\::somat"} = \'foo';
+             },
+         );
+
+        build;
     }
 }
 
@@ -272,11 +263,9 @@ TESTIMPORTER2: {
         My::TestExporter2->import;
     }
     is $somat, 'foo', '$somat should be set to "foo"';
-
-    ok class {
-        meta 'importer2';
-        has  foo => ( type => 'scalar' );
-    }, 'Build My::TestImporter2';
+    meta 'importer2';
+    has  foo => ( type => 'scalar' );
+    ok build, 'Build My::TestImporter2';
     is $somat, 'foo', '$somat should still be set to "foo"';
 }
 
@@ -301,11 +290,9 @@ USESUBEXPRESS: {
     BEGIN {
         My::SubExpress->import;
     }
-
-    class {
-        meta subex => ();
-        has  foo => ();
-    }
+    meta subex => ();
+    has  foo => ();
+    build;
 }
 
 ok $meta = +My::TestSubExpress->my_class, 'Get the SubExpress meta object';
