@@ -1,6 +1,6 @@
 Revision history for Perl extension Class::Meta::Express.
 
-0.05
+0.05  2008-05-02T02:15:26
       - Added the "configure_requires", and "recommends" parameters to
         Build.PL.
       - Fixed for Perl 5.6.2.
