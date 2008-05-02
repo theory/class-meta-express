@@ -51,7 +51,7 @@ sub has {
     unshift @_, $meta, 'name';
     splice @_, 3, 1, %{ $_[3] } if ref $_[3] eq 'HASH';
     splice @_, 3, 0, type => $def_type if $def_type;
-    goto $meta->can('add_attribute');
+    goto \&{ $meta->can('add_attribute') };
 }
 
 sub method {
@@ -66,7 +66,7 @@ sub build {
 
     # Build the class.
     unshift @_, $meta;
-    goto $meta->can('build');
+    goto \&{ $meta->can('build') };
 }
 
 sub _meth {
@@ -80,7 +80,7 @@ sub _meth {
             splice @_, 3, 1, %{ $_[3] } if $ref eq 'HASH';
         }
     }
-    goto $meta->can($method);
+    goto \&{ $meta->can($method) };
 }
 
 sub _unimport {

@@ -3,6 +3,7 @@ Revision history for Perl extension Class::Meta::Express.
 0.05
       - Added the "configure_requires", and "recommends" parameters to
         Build.PL.
+      - Fixed for Perl 5.6.2.
 
 0.04  2006-08-19T02:31:49
       - Fixed bad example of splicing @_ in the "Overriding Functions"
