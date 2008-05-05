@@ -550,7 +550,7 @@ This module is stored in an open repository at the following address:
 
 L<https://svn.kineticode.com/Class-Meta-Express/trunk/>
 
-Patches against SVN::Notify are welcome. Please send bug reports to
+Patches against Class::Meta::Express are welcome. Please send bug reports to
 <bug-class-meta-express@rt.cpan.org>.
 
 =head1 Author
@@ -570,7 +570,7 @@ David Wheeler <david@kineticode.com>
 
 Copyright (c) 2006-2008 Kineticode, Inc. Some Rights Reserved.
 
-This module is free software; you can redistribute it and/or modify it under the
-same terms as Perl itself.
+This module is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.
 
 =cut
