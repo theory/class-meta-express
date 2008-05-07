@@ -7,6 +7,9 @@ Revision history for Perl extension Class::Meta::Express.
       - Calling the `meta` function is now optional. If it is not called,
         Class::Meta::Express will create a key name from the last part of the
         class name. Suggested by Jon Swartz.
+      - Moved the justification for creating this module towards the end of
+        the documentation, so that the important description of how to use it
+        is more prominently towards the top. Suggested by Jon Swartz.
 
 0.05  2008-05-02T02:15:26
       - Added the "configure_requires", and "recommends" parameters to

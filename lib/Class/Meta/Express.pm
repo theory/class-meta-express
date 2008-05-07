@@ -174,151 +174,32 @@ Class::Meta::Express - Concise, expressive creation of Class::Meta classes
 =head1 Description
 
 This module provides an interface to concisely yet expressively create classes
-with L<Class::Meta|Class::Meta>. Although I am of course fond of
-L<Class::Meta|Class::Meta>, I've never been overly thrilled with its interface
-for creating classes:
-
- package My::Thingy;
- use Class::Meta;
-
-  BEGIN {
-      # Create a Class::Meta object for this class.
-      my $cm = Class::Meta->new( key => 'thingy' );
-
-      # Add a constructor.
-      $cm->add_constructor( name   => 'new' );
-
-      # Add a couple of attributes with generated accessors.
-      $cm->add_attribute(
-          name     => 'id',
-          is       => 'integer',
-          required => 1,
-      );
-
-      $cm->add_attribute(
-          name     => 'name',
-          is       => 'string',
-          required => 1,
-      );
-
-      $cm->add_attribute(
-          name    => 'age',
-          is      => 'integer',
-      );
-
-     # Add a custom method.
-      $cm->add_method(
-          name => 'chk_pass',
-          code => sub { return 'code' },
-      );
-      $cm->build;
-  }
-
-This example is relatively simple; it can get a lot more verbose. But even
-still, all of the method calls were annoying. I mean, whoever thought of using
-an object oriented interface for I<declaring> a class? (Oh yeah: I did.) I
-wasn't alone in wanting a more declarative interface; Curtis Poe, with my
-blessing, created L<Class::Meta::Declare|Class::Meta::Declare>, which would
-use this syntax to create the same class:
-
- package My::Thingy;
- use Class::Meta::Declare ':all';
-
- Class::Meta::Declare->new(
-     # Create a Class::Meta object for this class.
-     meta       => [
-         key       => 'thingy',
-     ],
-     # Add a constructor.
-     constructors => [
-         new => { }
-     ],
-     # Add a couple of attributes with generated accessors.
-     attributes => [
-         id => {
-             type    => $TYPE_INTEGER,
-             required => 1,
-         },
-         name => {
-             required => 1,
-             type     => $TYPE_STRING,
-         },
-         age => { type => $TYPE_INTEGER, },
-     ],
-     # Add a custom method.
-     methods => [
-         chk_pass => {
-             code => sub { return 'code' },
-         }
-     ]
- );
-
-This approach has the advantage of being a bit more concise, and it I<is>
-declarative, but I find all of the indentation levels annoying; it's hard for
-me to figure out where I am, especially if I have to define a lot of
-attributes. And finally, I<everything> is a string with this syntax, except
-for those ugly read-only scalars such as C<$TYPE_INTEGER>. So I can't easily
-tell where one attribute ends and the next one starts. Bleh.
-
-What I wanted was an interface with the visual distinctiveness of the original
-Class::Meta syntax but with the declarative approach and intelligent defaults
-of Class::Meta::Declare, while adding B<expressiveness> to the mix. The
-solution I've come up with is the use of temporary functions imported into a
-class only until the end of the class declaration:
-
-  package My::Thingy;
-  use Class::Meta::Express;
-
-  class {
-      # Create a Class::Meta object for this class.
-      meta 'thingy';
-
-      # Add a constructor.
-      ctor new => ( );
-
-      # Add a couple of attributes with generated accessors.
-      has id   => ( is => 'integer', required => 1 );
-      has name => ( is => 'string',  required => 1 );
-      has age  => ( is => 'integer' );
-
-     # Add a custom method.
-      method chk_pass => sub { return 'code' };
-  }
-
-That's much better, isn't it? In fact, we can simplify it even more by setting
-a default data type and eliminating the empty lists:
-
-  package My::Thingy;
-  use Class::Meta::Express;
-
-  class {
-      # Create a Class::Meta object for this class.
-      meta thingy => ( default_type => 'integer' );
-
-      # Add a constructor.
-      ctor 'new';
-
-      # Add a couple of attributes with generated accessors.
-      has id   => ( required => 1 );
-      has name => ( is => 'string', required => 1 );
-      has 'age';
-
-      # Add a custom method.
-      method chk_pass => sub { return 'code' };
-  }
-
-Not bad, eh? I have to be honest: I borrowed the syntax from L<Moose|Moose>.
-Thanks for the idea, Stevan!
+with L<Class::Meta|Class::Meta>. It does so by temporarily exporting magical
+functions into a package that uses it, thereby providing a declarative
+alternative to L<Class::Meta|Class::Meta>'s verbose object-oriented syntax.
 
 =head1 Interface
 
 Class::Meta::Express exports the following functions into any package that
-C<use>s it. But beware! The functions are temporary! Once the class is
+C<use>s it. But beware: the functions are temporary! Once the class is
 declared, the functions are all removed from the calling package, thereby
 avoiding name space pollution I<and> allowing you to create your own functions
 or methods with the same names, if you like, after declaring the class.
 
 =head2 Functions
+
+=head3 class
+
+  class {
+      # Declare class.
+  }
+
+Yes, the C<class> keyword is secretly a function. It takes a single argument,
+a code reference, for which may omit the C<sub> keyword. Cute, eh?. It simply
+executes the code refernce passed as its sole argument, removes the C<class>,
+C<meta>, C<ctor>, C<has>, C<method>, and C<build> functions from the calling
+name space, and then calls C<build()> on the Class::Meta object created by
+C<meta>.
 
 =head3 meta
 
@@ -485,19 +366,6 @@ reference:
       code => sub { shift; print @_, $/; },
   };
 
-=head3 class
-
-  class {
-      # Declare class.
-  }
-
-Yes, the C<class> keyword is secretly a function. It takes a single argument,
-a code reference, for which may omit the C<sub> keyword. Cute, eh?. It simply
-executes the code refernce passed as its sole argument, removes the C<class>,
-C<meta>, C<ctor>, C<has>, C<method>, and C<build> functions from the calling
-name space, and then calls C<build()> on the Class::Meta object created by
-C<meta>.
-
 =head3 build
 
   build;
@@ -540,6 +408,143 @@ to do is use your My::Express module instead of Class::Meta::Express:
   }
 
 And now you've created a new class with the string type attribute "name".
+
+=head1 Justification
+
+Although I am of course fond of L<Class::Meta|Class::Meta>, I've never been
+overly thrilled with its interface for creating classes:
+
+ package My::Thingy;
+ use Class::Meta;
+
+  BEGIN {
+      # Create a Class::Meta object for this class.
+      my $cm = Class::Meta->new( key => 'thingy' );
+
+      # Add a constructor.
+      $cm->add_constructor( name   => 'new' );
+
+      # Add a couple of attributes with generated accessors.
+      $cm->add_attribute(
+          name     => 'id',
+          is       => 'integer',
+          required => 1,
+      );
+
+      $cm->add_attribute(
+          name     => 'name',
+          is       => 'string',
+          required => 1,
+      );
+
+      $cm->add_attribute(
+          name    => 'age',
+          is      => 'integer',
+      );
+
+     # Add a custom method.
+      $cm->add_method(
+          name => 'chk_pass',
+          code => sub { return 'code' },
+      );
+      $cm->build;
+  }
+
+This example is relatively simple; it can get a lot more verbose. But even
+still, all of the method calls were annoying. I mean, whoever thought of using
+an object oriented interface for I<declaring> a class? (Oh yeah: I did.) I
+wasn't alone in wanting a more declarative interface; Curtis Poe, with my
+blessing, created L<Class::Meta::Declare|Class::Meta::Declare>, which would
+use this syntax to create the same class:
+
+ package My::Thingy;
+ use Class::Meta::Declare ':all';
+
+ Class::Meta::Declare->new(
+     # Create a Class::Meta object for this class.
+     meta       => [
+         key       => 'thingy',
+     ],
+     # Add a constructor.
+     constructors => [
+         new => { }
+     ],
+     # Add a couple of attributes with generated accessors.
+     attributes => [
+         id => {
+             type    => $TYPE_INTEGER,
+             required => 1,
+         },
+         name => {
+             required => 1,
+             type     => $TYPE_STRING,
+         },
+         age => { type => $TYPE_INTEGER, },
+     ],
+     # Add a custom method.
+     methods => [
+         chk_pass => {
+             code => sub { return 'code' },
+         }
+     ]
+ );
+
+This approach has the advantage of being a bit more concise, and it I<is>
+declarative, but I find all of the indentation levels annoying; it's hard for
+me to figure out where I am, especially if I have to define a lot of
+attributes. And finally, I<everything> is a string with this syntax, except
+for those ugly read-only scalars such as C<$TYPE_INTEGER>. So I can't easily
+tell where one attribute ends and the next one starts. Bleh.
+
+What I wanted was an interface with the visual distinctiveness of the original
+Class::Meta syntax but with the declarative approach and intelligent defaults
+of Class::Meta::Declare, while adding B<expressiveness> to the mix. The
+solution I've come up with is the use of temporary functions imported into a
+class only until the end of the class declaration:
+
+  package My::Thingy;
+  use Class::Meta::Express;
+
+  class {
+      # Create a Class::Meta object for this class.
+      meta 'thingy';
+
+      # Add a constructor.
+      ctor new => ( );
+
+      # Add a couple of attributes with generated accessors.
+      has id   => ( is => 'integer', required => 1 );
+      has name => ( is => 'string',  required => 1 );
+      has age  => ( is => 'integer' );
+
+     # Add a custom method.
+      method chk_pass => sub { return 'code' };
+  }
+
+That's much better, isn't it? In fact, we can simplify it even more by setting
+a default data type and eliminating the empty lists:
+
+  package My::Thingy;
+  use Class::Meta::Express;
+
+  class {
+      # Create a Class::Meta object for this class.
+      meta thingy => ( default_type => 'integer' );
+
+      # Add a constructor.
+      ctor 'new';
+
+      # Add a couple of attributes with generated accessors.
+      has id   => ( required => 1 );
+      has name => ( is => 'string', required => 1 );
+      has 'age';
+
+      # Add a custom method.
+      method chk_pass => sub { return 'code' };
+  }
+
+Not bad, eh? I have to be honest: I borrowed the syntax from L<Moose|Moose>.
+Thanks for the idea, Stevan!
 
 =head1 See Also
 
