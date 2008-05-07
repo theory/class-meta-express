@@ -336,13 +336,13 @@ C<meta> function exported by your class! For example:
 
   package My::Base;
   use Class::Meta::Express;
-
-  meta base => (
-       meta_class   => 'My::Meta',
-       default_type => 'string',
-       reexport     => 1,
-  );
-  build;
+  class {
+      meta base => (
+           meta_class   => 'My::Meta',
+           default_type => 'string',
+           reexport     => 1,
+      );
+  }
 
 And now other classes can use My::Base instead of Class::Meta::Express and get
 the same defaults. Say that you want My::Contact to inherit from My::Base and
@@ -352,9 +352,10 @@ use its defaults. Just do this:
   use My::Base;        # Forces import() to be called.
   use base 'My::Base';
 
-  meta 'contact';      # Uses My::Meta
-  has  'name'          # Will be a string.
-  build;
+  class {
+      meta 'contact';      # Uses My::Meta
+      has  'name'          # Will be a string.
+  }
 
 If you need your own C<import()> method to export stuff, just pass it to the
 reexport parameter:
