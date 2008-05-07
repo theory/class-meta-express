@@ -4,6 +4,9 @@ Revision history for Perl extension Class::Meta::Express.
       - Added a link to the Subversion repository.
       - Updated the documentation so that all examples use `class`
         rather than `build`.
+      - Calling the `meta` function is now optional. If it is not called,
+        Class::Meta::Express will create a key name from the last part of the
+        class name. Suggested by Jon Swartz.
 
 0.05  2008-05-02T02:15:26
       - Added the "configure_requires", and "recommends" parameters to

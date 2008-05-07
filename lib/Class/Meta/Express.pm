@@ -29,16 +29,7 @@ sub class (&) {
 }
 
 sub meta {
-    my $caller = caller;
-    my $key = shift;
-    my $args = ref $_[0] eq 'HASH' ? $_[0] : { @_ };
-    $args->{key} = $key;
-    _export(delete $args->{reexport}, $caller, $args) if $args->{reexport};
-    my $meta_class = delete $args->{meta_class} || 'Class::Meta';
-    my $def_type   = delete $args->{default_type};
-    my $meta = $meta_class->new( package => $caller, %{ $args } );
-    $meta_for{$caller} = [ $meta, $def_type ];
-    return $meta;
+    _new_meta( scalar caller, @_ );
 }
 
 sub ctor {
@@ -47,7 +38,8 @@ sub ctor {
 }
 
 sub has {
-    my ($meta, $def_type) = @{ $meta_for{ scalar caller } };
+    my $caller = caller;
+    my ($meta, $def_type) = _meta_for( $caller );
     unshift @_, $meta, 'name';
     splice @_, 3, 1, %{ $_[3] } if ref $_[3] eq 'HASH';
     splice @_, 3, 0, type => $def_type if $def_type;
@@ -69,9 +61,33 @@ sub build {
     goto &{ $meta->can('build') };
 }
 
+sub _new_meta {
+    my ($caller, $key) = (shift, shift);
+    unless (defined $key) {
+        # Create a key from the last part of the package name.
+        ($key = $caller) =~ s/.*:://;
+        $key = lcfirst $key;
+        $key =~ s/([[:upper:]]+)/_\L$1/g;
+    }
+    my $args = ref $_[0] eq 'HASH' ? $_[0] : { @_ };
+    $args->{key} = $key;
+    _export(delete $args->{reexport}, $caller, $args) if $args->{reexport};
+    my $meta_class = delete $args->{meta_class} || 'Class::Meta';
+    my $def_type   = delete $args->{default_type};
+    my $meta = $meta_class->new( package => $caller, %{ $args } );
+    $meta_for{$caller} = [ $meta, $def_type ];
+    return $meta;
+}
+
+sub _meta_for {
+    my $caller = shift;
+    _new_meta( $caller ) unless $meta_for{ $caller };
+    return wantarray ? @{ $meta_for{ $caller } } : $meta_for{ $caller }->[0];
+}
+
 sub _meth {
     my $method = 'add_' . shift;
-    my $meta = $meta_for{ scalar caller }->[0];
+    my $meta = _meta_for( scalar caller );
     unshift @_, $meta, 'name';
     if (my $ref = ref $_[3]) {
         if ($ref eq 'CODE') {
@@ -353,8 +369,7 @@ use its defaults. Just do this:
   use base 'My::Base';
 
   class {
-      meta 'contact';      # Uses My::Meta
-      has  'name'          # Will be a string.
+      has  'name'      # Will be a string.
   }
 
 If you need your own C<import()> method to export stuff, just pass it to the
@@ -379,6 +394,14 @@ reference:
        default_type => 'string',
        reexport     => 1,
   };
+
+Calling C<meta> is recommended before calling any of the other functions
+described below, but is entirely optional. If you don't call it, the C<key>
+attribute of the Class::Meta object will taken from the last part of the class
+name, with uppercase characters converted to lowercase and preceded by an
+underscore. So "My::FooXML" would get the key name "foo_xml". Of course, if
+you have more two classes that would end up with that key name, you'll have to
+call C<meta> for all but one in order to avoid conflicts.
 
 =head3 ctor
 

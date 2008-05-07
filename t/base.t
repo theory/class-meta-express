@@ -3,7 +3,7 @@
 # $Id$
 
 use strict;
-use Test::More tests => 68;
+use Test::More tests => 73;
 use Carp;
 BEGIN { $SIG{__DIE__} = \&confess };
 
@@ -312,3 +312,23 @@ ok $meta = +My::TestSubExpress->my_class, 'Get the SubExpress meta object';
 ok my $attr = $meta->attributes('foo'), 'Get the "foo" attribute';
 is $attr->type, 'string', 'Its type should be "string"';
 
+##############################################################################
+# Test no meta.
+NOMETA: {
+    package My::NoMEta;
+    use Test::More;
+
+    BEGIN {
+        use_ok 'Class::Meta::Express' or die;
+        use_ok 'Class::Meta::Types::String';
+    }
+
+    class {
+        ctor   new  => ();
+        has    foo  => ( type => 'scalar' );
+    };
+}
+
+ok my $nom = My::NoMEta->new, 'Construct My::NoMeta object';
+ok $meta = +My::NoMEta->my_class, 'Get the Noeta meta object';
+is $meta->key, 'no_meta', 'Its key should be "no_meta"';
