@@ -429,8 +429,7 @@ Authorization of the attribute: READ, WRITE, RDRW, or NONE.
 
 =item create
 
-Boolean indicating whether or not Class::Meta should create accessors for the
-attribute.
+Specifies how the accessor should be created: GET, SET, GETSET, or NONE.
 
 =item context
 
@@ -478,7 +477,7 @@ parameters to C<add_method()>, just pass them after the method name and
 explicitly mix in the C<code> parameter if you need it:
 
   method say => (
-      view => Class::Meta::Protected,
+      view => 'PROTECTED',
       code => sub { shift; print @_, $/; },
   );
 
@@ -525,7 +524,7 @@ The parameters may be passed as either a list, as above, or as a hash
 reference:
 
   method say => {
-      view => Class::Meta::Protected,
+      view => 'PROTECTED',
       code => sub { shift; print @_, $/; },
   };
 
