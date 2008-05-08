@@ -3,9 +3,11 @@
 # $Id$
 
 use strict;
-use Test::More tests => 73;
+use Test::More tests => 94;
 use Carp;
 BEGIN { $SIG{__DIE__} = \&confess };
+use File::Spec;
+my $fn = File::Spec->catfile('t', 'base.t');
 
 ##############################################################################
 # Test basic functionality.
@@ -332,3 +334,51 @@ NOMETA: {
 ok my $nom = My::NoMEta->new, 'Construct My::NoMeta object';
 ok $meta = +My::NoMEta->my_class, 'Get the Noeta meta object';
 is $meta->key, 'no_meta', 'Its key should be "no_meta"';
+
+##############################################################################
+# Test view, just to be sure.
+NOMETA: {
+    package My::View;
+    use Test::More;
+
+    BEGIN {
+        use_ok 'Class::Meta::Express' or die;
+        use_ok 'Class::Meta::Types::String';
+    }
+
+    class {
+        meta view      => ( default_type => 'string' );
+        ctor new       => ();
+        has  public    => ( view => Class::Meta::PUBLIC );
+        has  private   => ( view => Class::Meta::PRIVATE );
+        has  trusted   => ( view => Class::Meta::TRUSTED );
+        has  protected => ( view => Class::Meta::PROTECTED );
+    };
+
+    ok my $view = My::View->new, 'Create new private view object';
+    is undef, $view->public,     'Should be able to access public';
+    is undef, $view->private,    'Should be able to access private';
+    is undef, $view->trusted,    'Should be able to access trusted';
+    is undef, $view->protected,  'Should be able to access protected';
+}
+
+ok my $view = My::View->new, 'Create new public view object';
+is undef, $view->public,     'Should be able to access public';
+eval { $view->private };
+chk( 'private exception', qr/private is a private attribute of My::View/);
+eval { $view->trusted };
+chk( 'trusted exception', qr/trusted is a trusted attribute of My::View/);
+eval { $view->protected };
+chk( 'protected exception', qr/protected is a protected attribute of My::View/);
+
+sub chk {
+    my ($name, $qr) = @_;
+    # Catch the exception.
+    ok( my $err = $@, "Caught $name error" );
+    # Check its message.
+    like( $err, $qr, "Correct error" );
+    # Make sure it refers to this file.
+    like( $err, qr/(?:at\s+\Q$fn\E|\Q$fn\E\s+at)\s+line/, 'Correct context' );
+    # Make sure it doesn't refer to other Class::Meta files.
+    unlike( $err, qr|lib/Class/Meta|, 'Not incorrect context')
+}
