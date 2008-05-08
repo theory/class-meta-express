@@ -5,7 +5,6 @@
 use strict;
 use Test::More tests => 94;
 use Carp;
-BEGIN { $SIG{__DIE__} = \&confess };
 use File::Spec;
 my $fn = File::Spec->catfile('t', 'base.t');
 
@@ -332,12 +331,30 @@ NOMETA: {
 }
 
 ok my $nom = My::NoMEta->new, 'Construct My::NoMeta object';
-ok $meta = +My::NoMEta->my_class, 'Get the Noeta meta object';
+ok $meta = +My::NoMEta->my_class, 'Get the NoMEta meta object';
 is $meta->key, 'no_meta', 'Its key should be "no_meta"';
 
 ##############################################################################
+# Make sure default is inherited when no meta.
+# INHERITNOMETA: {
+#     package My::NoMetaInherit;
+#     use base 'My::TestDefault';
+#     use Test::More;
+#     BEGIN { use_ok 'Class::Meta::Express' or die }
+
+#     class {
+#         has 'zoz';
+#     }
+# }
+
+# ok $meta = My::NoMetaInherit->my_class, 'Get the NoMetaInherit object';
+# is $meta->key, 'no_meta_inherit', 'Its key should be "no_meta_inherit"';
+# ok $attr = $meta->attributes('zoz'), 'Get the "zoz" attribute object';
+# is $attr->type, 'string', 'It should be a string';
+
+##############################################################################
 # Test view, just to be sure.
-NOMETA: {
+VIEW: {
     package My::View;
     use Test::More;
 

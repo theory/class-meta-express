@@ -13,6 +13,8 @@ Revision history for Perl extension Class::Meta::Express.
       - Added brief descriptions of the parameters supported by Class::Meta
         for each function.
       - Added tests to ensure that the `view` parameter is properly respected.
+      - Now requiring Class::Meta 0.60 or later to take advantage of its
+        integrated `default_type` parameter.
 
 0.05  2008-05-02T02:15:26
       - Added the "configure_requires", and "recommends" parameters to

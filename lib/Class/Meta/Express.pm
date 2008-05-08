@@ -4,7 +4,7 @@ package Class::Meta::Express;
 
 use strict;
 use vars qw($VERSION);
-use Class::Meta;
+use Class::Meta '0.60';
 
 $VERSION = '0.06';
 
@@ -39,10 +39,9 @@ sub ctor {
 
 sub has {
     my $caller = caller;
-    my ($meta, $def_type) = _meta_for( $caller );
+    my $meta = _meta_for( $caller );
     unshift @_, $meta, 'name';
     splice @_, 3, 1, %{ $_[3] } if ref $_[3] eq 'HASH';
-    splice @_, 3, 0, type => $def_type if $def_type;
     goto &{ $meta->can('add_attribute') };
 }
 
@@ -52,7 +51,7 @@ sub method {
 }
 
 sub build {
-    my $meta = delete $meta_for{ my $caller = caller }->[0];
+    my $meta = delete $meta_for{ my $caller = caller };
     # Remove exported functions.
     _unimport($caller);
 
@@ -63,26 +62,25 @@ sub build {
 
 sub _new_meta {
     my ($caller, $key) = (shift, shift);
-    unless (defined $key) {
-        # Create a key from the last part of the package name.
-        ($key = $caller) =~ s/.*:://;
-        $key = lcfirst $key;
-        $key =~ s/([[:upper:]]+)/_\L$1/g;
-    }
     my $args = ref $_[0] eq 'HASH' ? $_[0] : { @_ };
     $args->{key} = $key;
     _export(delete $args->{reexport}, $caller, $args) if $args->{reexport};
     my $meta_class = delete $args->{meta_class} || 'Class::Meta';
-    my $def_type   = delete $args->{default_type};
     my $meta = $meta_class->new( package => $caller, %{ $args } );
-    $meta_for{$caller} = [ $meta, $def_type ];
+    $meta_for{$caller} = $meta;
     return $meta;
 }
 
 sub _meta_for {
     my $caller = shift;
-    _new_meta( $caller ) unless $meta_for{ $caller };
-    return wantarray ? @{ $meta_for{ $caller } } : $meta_for{ $caller }->[0];
+    unless ( $meta_for{ $caller } ) {
+        # Create a key from the last part of the package name.
+        (my $key = $caller) =~ s/.*:://;
+        $key = lcfirst $key;
+        $key =~ s/([[:upper:]]+)/_\L$1/g;
+        _new_meta( $caller, $key );
+    }
+    return $meta_for{ $caller };
 }
 
 sub _meth {

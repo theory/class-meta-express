@@ -6,7 +6,7 @@ my $build = Module::Build->new(
     configure_requires => { 'Module::Build' => '0.2701' },
     build_requires     => { 'Test::More'    => '0.17'   },
     recommends         => { 'Test::Pod'     => '1.20'   },
-    requires           => { 'Class::Meta'   => '0'      },
+    requires           => { 'Class::Meta'   => '0.60'   },
     create_makefile_pl => 'passthrough',
 );
 $build->create_build_script;
