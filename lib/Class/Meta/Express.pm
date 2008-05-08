@@ -176,7 +176,7 @@ Class::Meta::Express - Concise, expressive creation of Class::Meta classes
 This module provides an interface to concisely yet expressively create classes
 with L<Class::Meta|Class::Meta>. It does so by temporarily exporting magical
 functions into a package that uses it, thereby providing a declarative
-alternative to L<Class::Meta|Class::Meta>'s verbose object-oriented syntax.
+alternative to L<Class::Meta|Class::Meta>'s verbose object-oriented syntax.a
 
 =head1 Interface
 
@@ -198,18 +198,65 @@ Yes, the C<class> keyword is secretly a function. It takes a single argument,
 a code reference, for which may omit the C<sub> keyword. Cute, eh?. It simply
 executes the code refernce passed as its sole argument, removes the C<class>,
 C<meta>, C<ctor>, C<has>, C<method>, and C<build> functions from the calling
-name space, and then calls C<build()> on the Class::Meta object created by
-C<meta>.
+name space, and then calls C<build()> on the Class::Meta object, thus building
+the class.
 
 =head3 meta
 
   meta 'thingy';
 
 This function creates and returns the C<Class::Meta|Class::Meta> object that
-creates the class. The first argument must be the key to use for the class,
-which will be passed as the C<key> parameter to C<< Class::Meta->new >>.
-Otherwise, it takes the same parameters as C<< Class::Meta->new >>, as well as
-the following additions:
+creates the class. Calling it is optional; if you don't use it to identify the
+basic meta data of your class, Class::Meta::Express will create the
+Class::Meta object for you, passing the last part of the class name -- with
+uppercase characters converted to lowercase and preceded by an underscore --
+as the C<key> parameter. So "My::FooXML" would get the key "foo_xml". Of
+course, if you have more two classes that would end up with that key name,
+you'll have to call C<meta> for all but one in order to avoid conflicts.
+
+If you do choose to use this function, there are a number of benefits, as
+you'll soon read.
+
+The first argument must be the key to use for the class, which will be passed
+as the C<key> parameter to C<< Class::Meta->new >>. Otherwise, it takes the
+same parameters as C<< Class::Meta->new >>:
+
+=over 4
+
+=item abstract
+
+A boolean: Is the class an abstract class?
+
+=item trust
+
+An array refernce of classes that this class trusts to call its trusted
+methods.
+
+=item class_class
+
+A Class::Meta::Class subclass.
+
+=item constructor_class
+
+A Class::Meta::Constructor subclass.
+
+=item attribute_class
+
+A Class::Meta::Attribute subclass.
+
+=item method_class
+
+A Class::Meta::Method subclass.
+
+=item error_handler
+
+A code reference to handle exceptions.
+
+=back
+
+Consult the L<Class::Meta|Class::Meta/"new"> documentation for a detailed
+description of these parameters, in addition to which, C<meta> adds support
+for the following parameters:
 
 =over
 
@@ -276,25 +323,49 @@ reference:
        reexport     => 1,
   };
 
-Calling C<meta> is recommended before calling any of the other functions
-described below, but is entirely optional. If you don't call it, the C<key>
-attribute of the Class::Meta object will taken from the last part of the class
-name, with uppercase characters converted to lowercase and preceded by an
-underscore. So "My::FooXML" would get the key name "foo_xml". Of course, if
-you have more two classes that would end up with that key name, you'll have to
-call C<meta> for all but one in order to avoid conflicts.
-
 =head3 ctor
 
   ctor 'new';
 
 Calls C<add_constructor()> on the Class::Meta object created by C<meta>,
 passing the first argument as the C<name> parameter. All other arguments can
-be any of the parameters supported by C<add_constructor()>:
+be any of the parameters supported by
+L<add_constructor()|Class::Meta/"add_constructor">:
+
+=over 4
+
+=item create
+
+A boolean indicating whether or not Class::Meta shoulc create the constructor
+method.
+
+=item label
+
+A display name for the constructor.
+
+=item desc
+
+A description.
+
+=item code
+
+A code reference implementing the constructor method.
+
+=item view
+
+Visibility of the constructor: PUBLIC, PRIVATE, TRUSTED, or PROTECTED.
+
+=item caller
+
+A code reference to call the constructor.
+
+=back
+
+Here's a simple example that adds a label to the constructor:
 
   ctor new => ( label => 'Foo' );
 
-Or, a if you have Class::Meta 0.53 or later, the second argument can be a code
+If you have Class::Meta 0.53 or later, the second argument can be a code
 reference that will be passed as the C<code> parameter to
 C<add_constructor()>:
 
@@ -322,9 +393,63 @@ reference:
 
 Calls C<add_attribute()> on the Class::Meta object created by C<meta>, passing
 the first argument as the C<name> parameter. All other arguments can be any of
-the parameters supported by C<add_constructor()>, as in the example above. If
-the C<default_type> parameter was specified in the call to C<meta>, then the
-type (or C<is> if you have Class::Meta 0.53 or later and prefer it) can be
+the parameters supported by L<add_attribute()|Class::Meta/"add_attribute">:
+
+=over 4
+
+=item type
+
+=item is
+
+The attribute data type.
+
+=item required
+
+Boolean indicating whether or not the attribute is required to have a value.
+
+=item once
+
+Boolean indicating whether or not the attribute can be set only once.
+
+=item label
+
+A display name.
+
+=item desc
+
+A description.
+
+=item view
+
+Visibility of the attribute: PUBLIC, PRIVATE, TRUSTED, or PROTECTED.
+
+=item authz
+
+Authorization of the attribute: READ, WRITE, RDRW, or NONE.
+
+=item create
+
+Boolean indicating whether or not Class::Meta should create accessors for the
+attribute.
+
+=item context
+
+The attribute context, either CLASS or OBJECT.
+
+=item default
+
+Default value for the attribute, or else a code reference that, when executed,
+returns a default value.
+
+=item override
+
+Boolean indicating whether or not the attribut can override an attribute with
+the same name in a parent class.
+
+=back
+
+If the C<default_type> parameter was specified in the call to C<meta>, then
+the type (or C<is> if you have Class::Meta 0.53 or later and prefer it) can be
 omitted unless you need a different type:
 
   meta thingy => ( default_type => 'string' );
@@ -357,7 +482,45 @@ explicitly mix in the C<code> parameter if you need it:
       code => sub { shift; print @_, $/; },
   );
 
-All other arguments can be any of the parameters supported by C<add_meta()>
+All other arguments can be any of the parameters supported by
+L<add_method()|Class::Meta/"add_method">:
+
+=over 4
+
+=item label
+
+A display name.
+
+=item desc
+
+A description.
+
+=item view
+
+Visibility of the method: PUBLIC, PRIVATE, TRUSTED, or PROTECTED.
+
+=item code
+
+A code reference implementing the method.
+
+=item context
+
+The method context, either CLASS or OBJECT.
+
+=item caller
+
+A code reference to call the constructor.
+
+=item args
+
+A description of the supported arguments.
+
+=item returns
+
+A description of the return value.
+
+=back
+
 The parameters may be passed as either a list, as above, or as a hash
 reference:
 
