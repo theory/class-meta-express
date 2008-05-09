@@ -114,8 +114,16 @@ sub _unimport {
 
 sub _export {
     my ($export, $pkg, $args) = @_;
-    my @args = map { $_ => $args->{$_} } grep { $args->{$_} }
-        qw(meta_class default_type);
+    my @args = map { $_ => $args->{$_} } grep { exists $args->{$_} } qw(
+        meta_class
+        default_type
+        trust
+        class_class
+        constructor_class
+        attribute_class
+        method_class
+        error_handler
+    );
 
     my $meta = !@args ? \&meta : sub {
         splice @_, 1, 0, @args;
@@ -230,6 +238,10 @@ A boolean: Is the class an abstract class?
 An array refernce of classes that this class trusts to call its trusted
 methods.
 
+=item default_type
+
+The default data type to use for attributes that specify no data type.
+
 =item class_class
 
 A Class::Meta::Class subclass.
@@ -264,17 +276,12 @@ If you've subclassed Class::Meta and want to use your subclass to define your
 classes instead of Class::Meta itself, specify the subclass with this
 parameter.
 
-=item default_type
-
-The name of a data type that you'd like to be the default for all attributes
-created with C<has> that don't specify their own data types.
-
 =item reexport
 
 Installs an C<import()> method into the calling name space that exports the
 express functions. The trick is that, if you've specified values for the
-C<meta_class> and/or C<default_type> parameters, they will be used in the
-C<meta> function exported by your class! For example:
+C<meta_class> or any of the parameters supported by Class::Meta, they will be
+used in the C<meta> function exported by your class! For example:
 
   package My::Base;
   use Class::Meta::Express;
@@ -282,6 +289,7 @@ C<meta> function exported by your class! For example:
       meta base => (
            meta_class   => 'My::Meta',
            default_type => 'string',
+           trust        => 'My::Util',
            reexport     => 1,
       );
   }
@@ -304,6 +312,7 @@ reexport parameter:
   meta base => (
        meta_class   => 'My::Meta',
        default_type => 'string',
+       trust        => 'My::Util',
        reexport     => sub { ... },
   );
 
