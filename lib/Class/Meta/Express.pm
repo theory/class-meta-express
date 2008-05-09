@@ -114,16 +114,8 @@ sub _unimport {
 
 sub _export {
     my ($export, $pkg, $args) = @_;
-    my @args = map { $_ => $args->{$_} } grep { exists $args->{$_} } qw(
-        meta_class
-        default_type
-        trust
-        class_class
-        constructor_class
-        attribute_class
-        method_class
-        error_handler
-    );
+    my %exclude = map { $_ => 1 } qw( package key name );
+    my @args = map { $_ => $args->{$_} } grep { !$exclude{$_} } keys %$args;
 
     my $meta = !@args ? \&meta : sub {
         splice @_, 1, 0, @args;
@@ -229,6 +221,10 @@ same parameters as C<< Class::Meta->new >>:
 
 =over 4
 
+=item name
+
+A display name.
+
 =item abstract
 
 A boolean: Is the class an abstract class?
@@ -280,7 +276,7 @@ parameter.
 
 Installs an C<import()> method into the calling name space that exports the
 express functions. The trick is that, if you've specified values for the
-C<meta_class> or any of the parameters supported by Class::Meta, they will be
+C<meta_class> or many of the parameters supported by Class::Meta, they will be
 used in the C<meta> function exported by your class! For example:
 
   package My::Base;
@@ -305,6 +301,10 @@ use its defaults. Just do this:
   class {
       has  'name'      # Will be a string.
   }
+
+All the parameters supported by L<Class::Meta|Class::Meta/"new"> will be
+duplicated, with the exception of C<package>, C<key>, and C<name>, each of
+which should vary for individual classes.
 
 If you need your own C<import()> method to export stuff, just pass it to the
 reexport parameter:
