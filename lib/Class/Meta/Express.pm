@@ -194,7 +194,7 @@ or methods with the same names, if you like, after declaring the class.
 
 Yes, the C<class> keyword is secretly a function. It takes a single argument,
 a code reference, for which may omit the C<sub> keyword. Cute, eh?. It simply
-executes the code refernce passed as its sole argument, removes the C<class>,
+executes the code reference passed as its sole argument, removes the C<class>,
 C<meta>, C<ctor>, C<has>, C<method>, and C<build> functions from the calling
 name space, and then calls C<build()> on the Class::Meta object, thus building
 the class.
@@ -235,7 +235,7 @@ A boolean: Is the class an abstract class?
 
 =item trust
 
-An array refernce of classes that this class trusts to call its trusted
+An array reference of classes that this class trusts to call its trusted
 methods.
 
 =item default_type
@@ -353,7 +353,7 @@ L<add_constructor()|Class::Meta/"add_constructor">:
 
 =item create
 
-A boolean indicating whether or not Class::Meta shoulc create the constructor
+A boolean indicating whether or not Class::Meta should create the constructor
 method.
 
 =item label
@@ -443,7 +443,7 @@ Visibility of the attribute: PUBLIC, PRIVATE, TRUSTED, or PROTECTED.
 
 =item authz
 
-Authorization of the attribute: READ, WRITE, RDRW, or NONE.
+Authorization of the attribute: READ, WRITE, RDWR, or NONE.
 
 =item create
 
@@ -460,7 +460,7 @@ returns a default value.
 
 =item override
 
-Boolean indicating whether or not the attribut can override an attribute with
+Boolean indicating whether or not the attribute can override an attribute with
 the same name in a parent class.
 
 =back
@@ -739,7 +739,7 @@ type constraints, and more. Check it out!
 
 =item L<Class::Meta::Declare|Class::Meta::Declare>
 
-Curtis Poe's declarative inteface to Class::Meta. Deprecated in favor of this
+Curtis Poe's declarative interface to Class::Meta. Deprecated in favor of this
 module.
 
 =back
