@@ -17,6 +17,8 @@ Revision history for Perl extension Class::Meta::Express.
         integrated `default_type` parameter.
       - The `reexport` parameter now respects all of the other parameters
         passed to `meta`, not just `meta_class` and `default_type`.
+      - Added a spelling test. This has the benefit of reducing the number of
+        annoying spelling errors in the documentation.
 
 0.05  2008-05-02T02:15:26
       - Added the "configure_requires", and "recommends" parameters to
