@@ -114,8 +114,8 @@ sub _unimport {
 
 sub _export {
     my ($export, $pkg, $args) = @_;
-    my %exclude = map { $_ => 1 } qw( package key name );
-    my @args = map { $_ => $args->{$_} } grep { !$exclude{$_} } keys %$args;
+    my @args = map { $_ => $args->{$_} } grep { exists $args->{$_} }
+        Class::Meta::INHERITABLE, 'meta_class';
 
     my $meta = !@args ? \&meta : sub {
         splice @_, 1, 0, @args;
@@ -217,13 +217,17 @@ you'll soon read.
 
 The first argument must be the key to use for the class, which will be passed
 as the C<key> parameter to C<< Class::Meta->new >>. Otherwise, it takes the
-same parameters as C<< Class::Meta->new >>:
+same parameters as L<Class::Meta|Class::Meta/"new">:
 
 =over 4
 
 =item name
 
 A display name.
+
+=item desc
+
+A description of the class.
 
 =item abstract
 
@@ -291,8 +295,15 @@ used in the C<meta> function exported by your class! For example:
   }
 
 And now other classes can use My::Base instead of Class::Meta::Express and get
-the same defaults. Say that you want My::Contact to inherit from My::Base and
-use its defaults. Just do this:
+the same defaults. Of course, this is only important if you're not inheriting
+from another Class::Meta class and not passing the C<meta_class> parameter,
+because Class::Meta classes inherit the parameter values from their most
+immediate super class. But if you're not using inheritance and want to set up
+some universal settings to use throughout your project, this is a great way to
+do it.a
+
+For example, say that you want My::Contact to inherit from My::Base and use
+its defaults. Just do this:
 
   package My::Contact;
   use My::Base;        # Forces import() to be called.
@@ -302,9 +313,8 @@ use its defaults. Just do this:
       has  'name'      # Will be a string.
   }
 
-All the parameters supported by L<Class::Meta|Class::Meta/"new"> will be
-duplicated, with the exception of C<package>, C<key>, and C<name>, each of
-which should vary for individual classes.
+Any parameters passed to C<meta> and labeled as "inheritable" by
+L<Class::Meta|Class::Meta/"new"> will be duplicated, as will "meta_class".
 
 If you need your own C<import()> method to export stuff, just pass it to the
 reexport parameter:
@@ -372,9 +382,8 @@ Here's a simple example that adds a label to the constructor:
 
   ctor new => ( label => 'Foo' );
 
-If you have Class::Meta 0.53 or later, the second argument can be a code
-reference that will be passed as the C<code> parameter to
-C<add_constructor()>:
+The second argument can optionally be a code reference that will be passed as
+the C<code> parameter to C<add_constructor()>:
 
   ctor new => sub { bless {} => shift };
 
@@ -384,6 +393,7 @@ explicitly:
   ctor new => (
       label => 'Foo',
       code  => sub { bless {} => shift },
+      view  => 'PRIVATE',
   );
 
 The parameters may be passed as either a list, as above, or as a hash
@@ -392,6 +402,7 @@ reference:
   ctor new => {
       label => 'Foo',
       code  => sub { bless {} => shift },
+      view  => 'PRIVATE',
   };
 
 =head3 has
