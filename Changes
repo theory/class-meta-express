@@ -5,7 +5,7 @@ Revision history for Perl extension Class::Meta::Express.
 0.10  2008-05-13T03:45:58
       - Added a link to the Subversion repository.
       - Updated the documentation so that all examples use `class`
-        rather than `build`.
+        rather than the deprecated `build`.
       - Calling the `meta` function is now optional. If it is not called,
         Class::Meta::Express will create a key name from the last part of the
         class name. Suggested by Jon Swartz.
@@ -17,7 +17,7 @@ Revision history for Perl extension Class::Meta::Express.
       - Added tests to ensure that the `view` parameter is properly respected.
       - Now requiring Class::Meta 0.60 or later to take advantage of its
         integrated `default_type` parameter.
-      - The `reexport` parameter now respects all of the other parameters
+      - The `reexport` parameter now respects many of the other parameters
         passed to `meta`, not just `meta_class` and `default_type`.
       - Added a spelling test. This has the benefit of reducing the number of
         annoying spelling errors in the documentation.
