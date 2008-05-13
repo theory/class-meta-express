@@ -278,7 +278,7 @@ parameter.
 
 =item reexport
 
-Installs an C<import()> method into the calling name space that exports the
+Installs an C<import()> method into the calling name space that re-exports the
 express functions. The trick is that, if you've specified values for the
 C<meta_class> or many of the parameters supported by Class::Meta, they will be
 used in the C<meta> function exported by your class! For example:
