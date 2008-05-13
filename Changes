@@ -1,6 +1,6 @@
 Revision history for Perl extension Class::Meta::Express.
 
-0.06  2008-05-13T03:44:58
+0.10  2008-05-13T03:44:58
       - Added a link to the Subversion repository.
       - Updated the documentation so that all examples use `class`
         rather than `build`.
