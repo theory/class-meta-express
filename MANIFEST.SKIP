@@ -26,3 +26,5 @@
 
 # Avoid build files.
 ^Class-Meta-Express
+pod-spelling.t$
+

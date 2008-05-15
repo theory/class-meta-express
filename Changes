@@ -1,6 +1,8 @@
 Revision history for Perl extension Class::Meta::Express.
 
 0.11
+      - Removed the spelling test from the distribution, since it can
+        fail on systems without a spell program or using a different locale.
 
 0.10  2008-05-13T03:45:58
       - Added a link to the Subversion repository.

@@ -7,6 +7,5 @@ META.yml
 README
 t/base.t
 t/build.t
-t/pod-spelling.t
 t/pod.t
 t/pod_coverage.t
