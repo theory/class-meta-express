@@ -12,6 +12,7 @@ configure_requires:
 requires:
   Class::Meta: 0.60
 build_requires:
+  Module::Build: 0.2701
   Test::More: 0.17
 recommends:
   Test::Pod: 1.20
