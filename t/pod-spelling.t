@@ -1,4 +1,4 @@
-#!perl -w
+#!/usr/bin/perl -w
 
 use strict;
 use Test::More;
@@ -16,3 +16,4 @@ Stevan
 authz
 ctor
 desc
+cpan
