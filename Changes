@@ -1,6 +1,6 @@
 Revision history for Perl extension Class::Meta::Express.
 
-0.12
+0.12  2011-06-20T00:50:10
       - Moved repostitory to
         [GitHub](https://github.com/theory/class-meta-express/).
       - Switched to a "traditional" `Makefile.PL`.
