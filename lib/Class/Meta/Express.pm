@@ -751,7 +751,7 @@ Patches against Class::Meta::Express are welcome. Please send bug reports to
 
 =head1 Author
 
-David Wheeler <david@kineticode.com>
+David Wheeler <david@justatheory.com>
 
 =head1 Copyright and License
 
