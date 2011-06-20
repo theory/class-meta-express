@@ -141,17 +141,6 @@ __END__
 
 ##############################################################################
 
-=begin comment
-
-Fake-out Module::Build. Delete if it ever changes to support =head1 headers
-other than all uppercase.
-
-=head1 NAME
-
-Class::Meta::Express - Concise, expressive creation of Class::Meta classes
-
-=end comment
-
 =head1 Name
 
 Class::Meta::Express - Concise, expressive creation of Class::Meta classes
@@ -761,15 +750,6 @@ Patches against Class::Meta::Express are welcome. Please send bug reports to
 <bug-class-meta-express@rt.cpan.org>.
 
 =head1 Author
-
-=begin comment
-
-Fake-out Module::Build. Delete if it ever changes to support =head1 headers
-other than all uppercase.
-
-=head1 AUTHOR
-
-=end comment
 
 David Wheeler <david@kineticode.com>
 
