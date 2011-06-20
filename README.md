@@ -1,4 +1,4 @@
-Class/Meta/Express version 0.13
+Class/Meta/Express version 0.14
 ===============================
 
 This module provides an interface to concisely yet expressively create classes
