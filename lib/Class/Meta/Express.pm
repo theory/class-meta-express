@@ -750,9 +750,6 @@ Please file bug reports via L<GitHub
 Issues|http://github.com/theory/class-meta-express/issues/> or by sending mail to
 L<bug-Class-Meta-Express.cpan.org|mailto:bug-Class-Meta-Express.cpan.org>.
 
-Patches against Class::Meta-Express are welcome. Please send bug reports to
-<bug-class-meta-express@rt.cpan.org>.
-
 =head1 Author
 
 David E. Wheeler <david@justatheory.com>
