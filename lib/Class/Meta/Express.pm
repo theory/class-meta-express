@@ -1,7 +1,5 @@
 package Class::Meta::Express;
 
-# $Id$
-
 use strict;
 use vars qw($VERSION);
 use Class::Meta '0.60';
