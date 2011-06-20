@@ -2,31 +2,33 @@ Class/Meta/Express version 0.12
 ===============================
 
 This module provides an interface to concisely yet expressively create classes
-Class::Meta. The intent is to provide a simpler, more meaningful interface for
-creating Class::Meta classes while preserving the power and flesbility of
-Class::Meta.
+[Class::Meta](http://search.cpan.org/perldoc?Class::Meta). The intent is to
+provide a simpler, more meaningful interface for creating Class::Meta classes
+while preserving the power and flexibility of Class::Meta.
 
-INSTALLATION
+Installation
+------------
 
 To install this module, type the following:
 
-   perl Build.PL
-   ./Build
-   ./Build test
-   ./Build install
+    perl Build.PL
+    ./Build
+    ./Build test
+    ./Build install
 
 Or, if you don't have Module::Build installed, type the following:
 
-   perl Makefile.PL
-   make
-   make test
-   make install
+    perl Makefile.PL
+    make
+    make test
+    make install
 
-DEPENDENCIES
+Dependencies
+------------
 
-  Class::Meta
+* Class::Meta
 
-COPYRIGHT AND LICENCE
+Copyright and Licence
 
 Copyright (c) 2006-2011 David E. Wheeler Some Rights Reserved.
 
