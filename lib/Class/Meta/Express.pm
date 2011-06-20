@@ -751,11 +751,11 @@ Patches against Class::Meta::Express are welcome. Please send bug reports to
 
 =head1 Author
 
-David Wheeler <david@justatheory.com>
+David E. Wheeler <david@justatheory.com>
 
 =head1 Copyright and License
 
-Copyright (c) 2006-2008 Kineticode, Inc. Some Rights Reserved.
+Copyright (c) 2006-2011 David E. Wheeler Some Rights Reserved.
 
 This module is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself.
