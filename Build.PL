@@ -11,5 +11,12 @@ my $build = Module::Build->new(
         'Test::More'    => '0.17',
         'Module::Build' => '0.2701',
     },
+    meta-express_merge => {
+        resources => {
+            homepage   => 'http://search.cpan.org/dist/Class-Meta-Express/',
+            bugtracker => 'http://github.com/theory/class-meta-express/issues/',
+            repository => 'http://github.com/theory/class-meta-express/',
+        }
+    },
 );
 $build->create_build_script;

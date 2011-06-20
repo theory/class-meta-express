@@ -742,11 +742,15 @@ method that's already installed in a module.
 
 =head1 Support
 
-This module is stored in an open repository at the following address:
+This module is stored in an open L<GitHub
+repository|http://github.com/theory/class-meta-express/>. Feel free to fork and
+contribute!
 
-L<https://svn.kineticode.com/Class-Meta-Express/trunk/>
+Please file bug reports via L<GitHub
+Issues|http://github.com/theory/class-meta-express/issues/> or by sending mail to
+L<bug-Class-Meta-Express.cpan.org|mailto:bug-Class-Meta-Express.cpan.org>.
 
-Patches against Class::Meta::Express are welcome. Please send bug reports to
+Patches against Class::Meta-Express are welcome. Please send bug reports to
 <bug-class-meta-express@rt.cpan.org>.
 
 =head1 Author
