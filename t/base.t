@@ -4,7 +4,6 @@ use strict;
 use Test::More tests => 94;
 use Carp;
 use File::Spec;
-my $fn = File::Spec->catfile('t', 'base.t');
 
 ##############################################################################
 # Test basic functionality.
@@ -395,7 +394,7 @@ sub chk {
     SKIP: {
         skip 'Older Carp lacks @CARP_NOT support', 2 unless $] >= 5.008;
         # Make sure it refers to this file.
-        like( $err, qr/(?:at\s+\Q$fn\E|\Q$fn\E\s+at)\s+line/, 'Correct context' );
+        like( $err, qr/(?:at\s+t.base[.]t|t.base[.t]\s+at)\s+line/, 'Correct context' );
         # Make sure it doesn't refer to other Class::Meta files.
         unlike( $err, qr|lib/Class/Meta|, 'Not incorrect context')
     }

@@ -2,6 +2,7 @@ Revision history for Perl extension Class::Meta::Express.
 
 0.13
       - Removed redundant bug reporting email address from the documentation.
+      - Fixed failing test on Perl 5.14 on Win32.
 
 0.12  2011-06-20T00:50:10
       - Moved repostitory to
