@@ -1,6 +1,7 @@
 Revision history for Perl extension Class::Meta::Express.
 
 0.14
+      - Better fix for failing tests on Windows, suggested by Eric Brine.
 
 0.13  2011-06-20T23:09:39
       - Removed redundant bug reporting email address from the documentation.
