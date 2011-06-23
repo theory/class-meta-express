@@ -748,7 +748,7 @@ contribute!
 
 Please file bug reports via L<GitHub
 Issues|http://github.com/theory/class-meta-express/issues/> or by sending mail to
-L<bug-Class-Meta-Express.cpan.org|mailto:bug-Class-Meta-Express.cpan.org>.
+L<bug-Class-Meta-Express@rt.cpan.org|mailto:bug-Class-Meta-Express@rt.cpan.org>.
 
 =head1 Author
 
