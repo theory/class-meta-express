@@ -161,7 +161,7 @@ Class::Meta::Express - Concise, expressive creation of Class::Meta classes
 This module provides an interface to concisely yet expressively create classes
 with L<Class::Meta|Class::Meta>. It does so by temporarily exporting magical
 functions into a package that uses it, thereby providing a declarative
-alternative to L<Class::Meta|Class::Meta>'s verbose object-oriented syntax.a
+alternative to L<Class::Meta|Class::Meta>'s verbose object-oriented syntax.
 
 =head1 Interface
 
@@ -190,7 +190,7 @@ the class.
 
   meta 'thingy';
 
-This function creates and returns the C<Class::Meta|Class::Meta> object that
+This function creates and returns the L<Class::Meta|Class::Meta> object that
 creates the class. Calling it is optional; if you don't use it to identify the
 basic meta data of your class, Class::Meta::Express will create the
 Class::Meta object for you, passing the last part of the class name -- with
