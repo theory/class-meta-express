@@ -2,7 +2,7 @@ package Class::Meta::Express;
 
 use strict;
 use vars qw($VERSION);
-use Class::Meta '0.60';
+use Class::Meta 0.60;
 
 $VERSION = '0.14';
 
