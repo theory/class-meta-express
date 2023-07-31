@@ -743,12 +743,11 @@ method that's already installed in a module.
 =head1 Support
 
 This module is stored in an open L<GitHub
-repository|http://github.com/theory/class-meta-express/>. Feel free to fork and
+repository|https://github.com/theory/class-meta-express/>. Feel free to fork and
 contribute!
 
 Please file bug reports via L<GitHub
-Issues|http://github.com/theory/class-meta-express/issues/> or by sending mail to
-L<bug-Class-Meta-Express@rt.cpan.org|mailto:bug-Class-Meta-Express@rt.cpan.org>.
+Issues|https://github.com/theory/class-meta-express/issues/>.
 
 =head1 Author
 
@@ -756,7 +755,7 @@ David E. Wheeler <david@justatheory.com>
 
 =head1 Copyright and License
 
-Copyright (c) 2006-2011 David E. Wheeler Some Rights Reserved.
+Copyright (c) 2006-2023 David E. Wheeler Some Rights Reserved.
 
 This module is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself.

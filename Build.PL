@@ -13,9 +13,9 @@ my $build = Module::Build->new(
     },
     meta-express_merge => {
         resources => {
-            homepage   => 'http://search.cpan.org/dist/Class-Meta-Express/',
-            bugtracker => 'http://github.com/theory/class-meta-express/issues/',
-            repository => 'http://github.com/theory/class-meta-express/',
+            homepage   => 'https://search.cpan.org/dist/Class-Meta-Express/',
+            bugtracker => 'https://github.com/theory/class-meta-express/issues/',
+            repository => 'https://github.com/theory/class-meta-express/',
         }
     },
 );
