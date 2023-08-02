@@ -4,7 +4,7 @@ use strict;
 use vars qw($VERSION);
 use Class::Meta 0.60;
 
-$VERSION = '0.14';
+$VERSION = '0.15';
 
 my %meta_for;
 
